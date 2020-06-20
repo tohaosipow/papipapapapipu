@@ -4,8 +4,6 @@ import View from '@vkontakte/vkui/dist/components/View/View';
 import ScreenSpinner from '@vkontakte/vkui/dist/components/ScreenSpinner/ScreenSpinner';
 import '@vkontakte/vkui/dist/vkui.css';
 import {useSelector, useDispatch} from "react-redux";
-import Home from './panels/Home';
-import Persik from './panels/Persik';
 import Hello from "./panels/Hello";
 import eruda from 'eruda'
 import { createBrowserHistory } from 'history'

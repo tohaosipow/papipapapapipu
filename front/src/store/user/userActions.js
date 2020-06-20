@@ -58,5 +58,5 @@ const setCommunity = function (community) {
 
 
 export {
-    loadUser, setToken, loadToken, loadCommunity
+    loadUser, setToken, loadToken, loadCommunity, setCommunity
 }

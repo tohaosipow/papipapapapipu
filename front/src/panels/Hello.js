@@ -33,7 +33,8 @@ import Icon24Similar from '@vkontakte/icons/dist/24/similar';
     import Icon24Phone from '@vkontakte/icons/dist/24/phone';
 import Icon24StorefrontOutline from '@vkontakte/icons/dist/24/storefront_outline';
 import Icon28MoneyCircleOutline from '@vkontakte/icons/dist/28/money_circle_outline';
-import {loadCommunity} from "../store/user/userActions";
+import {loadCommunity, setCommunity} from "../store/user/userActions";
+import communities from "../api/communities";
 
 const Hello = ({location}) => {
     const currentUser = useSelector(state => state.user.user);
@@ -67,7 +68,13 @@ const Hello = ({location}) => {
 
     const install = e => {
         bridge.send("VKWebAppAddToCommunity", {}).then((data) => {
-            bridge.send("VKWebAppGetCommunityToken", {"app_id": 7516806, "group_id": data.group_id, "scope": "messages"});
+            bridge.send("VKWebAppGetCommunityToken", {"app_id": 7516806, "group_id": data.group_id, "scope": "messages"}).then((r) => {
+                const token = r.access_token;
+                const id = data.group_id;
+                communities.createCommunity(token, id).then((z) => {
+                    dispatch(setCommunity(z.data));
+                })
+            });
         });
     };
 
