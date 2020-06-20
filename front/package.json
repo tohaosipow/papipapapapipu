@@ -1,0 +1,53 @@
+{
+  "name": "recall",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development PORT=10888 react-scripts start",
+    "build": "react-scripts build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "cross-env": "^5.2.1",
+    "react-hot-loader": "^4.12.21",
+    "react-scripts": "^3.4.1"
+  },
+  "dependencies": {
+    "@types/react-transition-group": "^4.2.4",
+    "@vkontakte/icons": "^1.26.0",
+    "@vkontakte/vk-bridge": "^2.2.1",
+    "@vkontakte/vkui": "^3.9.2",
+    "axios": "^0.19.2",
+    "babel-eslint": "^10.1.0",
+    "chalk": "^2.4.2",
+    "core-js": "^3.6.5",
+    "eruda": "^2.3.3",
+    "history": "^5.0.0",
+    "moment": "^2.25.3",
+    "prop-types": "^15.7.2",
+    "raygun": "^0.10.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-redux": "^7.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-transition-group": "latest",
+    "redux": "^3.1.7",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+version: '3'
+services:
+  app:
+    restart: always
+    build:
+      context: ./src
+    container_name: backend
+    ports:
+      - 8001:8001
+    volumes:
+      - ./src:/src
+    networks:
+      - app-network
+    depends_on:
+      - leader-of-digital-mysql
+      - adminer
+
+  leader-of-digital-mysql:
+     image: mysql:latest
+     container_name: leader-of-digital-mysql
+     restart: unless-stopped
+     tty: true
+     ports:
+       - 3306:3306
+     environment:
+       command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max_connections=200
+       MYSQL_DATABASE: leaderofdigital
+       MYSQL_ROOT_PASSWORD: 12121212
+       SERVICE_TAGS: dev
+       SERVICE_NAME: mysql
+     volumes:
+       - ./db:/var/lib/mysql:rw
+     networks:
+       - app-network
+
+  adminer:
+    image: adminer
+    depends_on:
+      - leader-of-digital-mysql
+    ports:
+      - 8080:8080
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
