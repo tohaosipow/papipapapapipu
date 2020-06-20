@@ -9,9 +9,11 @@
 
 ## Frontend
 
-1. Установить npm, node js
-2. npm i -g react-scripts 
-3. npm i -g  cross-env
-4. Перейти в папку ./front
+1. Перейти в папку ./front
+2. Установить npm, node js
+3. npm i -g react-scripts 
+4. npm i -g  cross-env
 5. npm install
 6. cross-env NODE_ENV=development PORT=10888 react-scripts start
+
+Без Vk Vk Mini Apps не поднимется 
