@@ -17,3 +17,6 @@
 6. cross-env NODE_ENV=development PORT=10888 react-scripts start
 
 Без Vk Vk Mini Apps не поднимется 
+
+## Контакты
+Евгений: @EugeneFronzak 
