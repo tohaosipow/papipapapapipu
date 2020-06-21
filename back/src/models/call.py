@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BigInteger, ForeignKey, String, Boolean, Integer, DateTime
+from sqlalchemy import Column, BigInteger, ForeignKey, String, Boolean, Integer, DateTime, TIMESTAMP, func
 from sqlalchemy.orm import relationship
 
 from database.session import Base
@@ -12,7 +12,7 @@ class Call(BaseModel, Base):
 	client_phone = Column(String(12), nullable=True)
 	hidden = Column(Boolean, nullable=False)
 	answered = Column(Boolean, nullable=False)
-	call_time = Column(DateTime, nullable=False)
+	call_time = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 	rate = Column(Integer, nullable=True)
 	result = Column(String(1000), nullable=True)
 	manager_id = Column(BigInteger, ForeignKey('manager.id', ondelete="SET NULL"), nullable=True)

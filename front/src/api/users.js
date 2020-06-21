@@ -9,5 +9,9 @@ export default {
         return axios.get(endpoint + "/users/")
     },
 
+    getCommunities: () => {
+        return axios.get(endpoint + "/users/getUserCommunities")
+    }
+
 
 }

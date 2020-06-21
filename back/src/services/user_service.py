@@ -14,7 +14,7 @@ class UserService:
 		return user
 	
 	def get_user_by_id(self, db_session: Session, user_id: int):
-		user =  db_session.query(User).get(user_id)
+		user =  db_session.query(User).options(lazyload('admin_communities')).get(user_id)
 		if user is None:
 			raise NoResultFound('User not found')
 		return user

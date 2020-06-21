@@ -14,7 +14,7 @@ function userReducer(state = initState, action) {
 
     switch (action.type) {
         case SET_USER: {
-            if(window.rg4js) {
+            /*if(window.rg4js) {
                 window.rg4js('getRaygunInstance').resetAnonymousUser();
                 window.rg4js("setUser", {
                     identifier: action.user.id,
@@ -22,7 +22,7 @@ function userReducer(state = initState, action) {
                     isAnonymous: false,
                     fullName: action.user.first_name + " " + action.user.last_name,
                 });
-            }
+            }*/
             return Object.assign({}, {...state, user: action.user})
         }
         case SET_TOKEN: {

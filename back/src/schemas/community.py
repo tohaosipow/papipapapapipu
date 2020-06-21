@@ -21,11 +21,11 @@ class CommunityInDB(CommunityBase):
 
 class CommunityCreate(BaseModel):
 	community_vk_id: int
-	name: str
-	avatar_url: str
-	admins: List[int]
-	managers: List[ManagerCreate]
+	api_key: str
 	
 class Community(CommunityInDB):
 	admins: List[User]
 	managers: List[Manager]
+	
+class UserWithCommunities(User):
+	admin_communities: List[Community]

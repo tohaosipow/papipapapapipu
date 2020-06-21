@@ -54,6 +54,7 @@ def get_current_user_by_refresh_token(db_session: Session = Depends(get_db), tok
 		raise HTTPException(status_code=404, detail="User not found")
 	return user
 
+
 def is_vk_sign_valid(*, query: dict, secret: str) -> bool:
 	"""Check VK Apps signature"""
 	vk_subset = OrderedDict(sorted(x for x in query.items() if x[0][:3] == "vk_"))

@@ -1,58 +1,65 @@
 import React, {useEffect, useState} from "react";
-import View from "@vkontakte/vkui/dist/components/View/View";
-import Panel from "@vkontakte/vkui/dist/components/Panel/Panel";
-import PanelHeader from "@vkontakte/vkui/dist/components/PanelHeader/PanelHeader";
-import Group from "@vkontakte/vkui/dist/components/Group/Group";
-import FormLayoutGroup from "@vkontakte/vkui/dist/components/FormLayoutGroup/FormLayoutGroup";
-import Input from "@vkontakte/vkui/dist/components/Input/Input";
-import FormLayout from "@vkontakte/vkui/dist/components/FormLayout/FormLayout";
-import Select from "@vkontakte/vkui/dist/components/Select/Select";
-import Placeholder from "@vkontakte/vkui/dist/components/Placeholder/Placeholder";
-import Button from "@vkontakte/vkui/dist/components/Button/Button";
-import Gallery from "@vkontakte/vkui/dist/components/Gallery/Gallery";
+
 import Icon24Phone from '@vkontakte/icons/dist/24/phone';
-import Checkbox from "@vkontakte/vkui/dist/components/Checkbox/Checkbox";
-import Div from "@vkontakte/vkui/dist/components/Div/Div";
-import bridge from '@vkontakte/vk-bridge';
 import {loadCommunity} from "../../store/user/userActions";
 import {useSelector, useDispatch} from "react-redux";
+
 import "imrc-datetime-picker/dist/imrc-datetime-picker.css";
 import {DatetimePickerTrigger} from 'imrc-datetime-picker';
-import moment, {months} from 'moment-jalaali';
-import PanelSpinner from "@vkontakte/vkui/dist/components/PanelSpinner/PanelSpinner";
-import Spinner from "@vkontakte/vkui/dist/components/Spinner/Spinner";
-import {SelectMimicry} from "@vkontakte/vkui";
+import moment from 'moment-jalaali';
+import bridge from '@vkontakte/vk-bridge';
+import {PanelHeader, Panel, Input, Spinner, SelectMimicry, Div, Checkbox, Button, Placeholder, FormLayout, PanelHeaderButton, View} from "@vkontakte/vkui";
+import Icon28SettingsOutline from '@vkontakte/icons/dist/28/settings_outline';
+import {useHistory} from "react-router-dom";
+import communities from "../../api/communities";
 
-const GetCall = () => {
+
+
+const GetCall = (props) => {
 
     const dispatch = useDispatch();
 
     const [phone, setPhone] = useState("");
     const [call, setCall] = useState(0);
     const [date, setDate] = useState(moment());
+    const [role, setRole] = useState(null);
+    const [responsePhone, setResponsePhone] = useState(false);
     const community = useSelector(state => state.user.community);
+    const currentUser = useSelector(state => state.user.user);
 
     const getPhone = () => {
-        bridge.send("VKWebAppGetPhoneNumber", {}).then((data) => {
-            setPhone("+"+data.phone_number);
-        })
+        if(!responsePhone) {
+            bridge.send("VKWebAppGetPhoneNumber", {}).then((data) => {
+                setPhone("+" + data.phone_number);
+                setResponsePhone(true);
+            })
+        }
     };
 
+    const makeCall = () => {
+        communities.createCall(community.id, phone, currentUser.id, date.format(), false);
+        setCall(2);
+    };
+
+    const history = useHistory();
 
     useEffect(() => {
         let query = new URLSearchParams(window.location.search);
         let group_id = query.get('vk_group_id');
-        let role = query.get('vk_viewer_group_role');
-        if (group_id) {
-            dispatch(loadCommunity(group_id));
+        setRole(query.get('vk_viewer_group_role'));
+        let gr2 = props.match.params.group_id;
+        if (group_id || gr2) {
+            dispatch(loadCommunity(gr2));
         }
+        else history.push("/");
     }, []);
 
     const defaultMoment = moment();
 
+
     return community ? <View activePanel='hello'>
         <Panel id='hello'>
-            <PanelHeader>Заказ звонка</PanelHeader>
+            <PanelHeader  left={role === 'admin' && <PanelHeaderButton onClick={() => {history.push("/manage/"+community.community_vk_id)}}><Icon28SettingsOutline/></PanelHeaderButton>}>Заказ звонка</PanelHeader>
 
             {call === 2?<div>
                     <Placeholder
@@ -72,41 +79,23 @@ const GetCall = () => {
                         Вы собираетесь заказать звонок от {community.name}
                     </Placeholder>
                     <FormLayout>
-                        <Input value={phone} onChange={(e) => {
+
+                        <Input   bottom={phone && phone.match(/\+7\d{10}/g) ? '' : 'Пожалуйста, введите телефон в международном формате'}   status={phone.match(/\+7\d{10}/g) ? 'valid' : 'error'} value={phone} onChange={(e) => {
                             setPhone(e.target.value)
                         }} onClick={() => getPhone()} top={"Номер телефона"} type="text" placeholder="+7 912 345 67 89"/>
 
+                        <Input type={"datetime-local"} valid={date.length > 2?"valid":"error"} min={moment().format("YYYY-MM-DDTHH:mm")} value={moment(date).format("YYYY-MM-DDTHH:mm")}  onChange={(e) => {setDate(moment(e.target.value))
+                        }}  top={"Дата и время для звонка"} placeholder="+7 912 345 67 89"/>
 
-                        <DatetimePickerTrigger
-                            width={"100%"}
-                            onChange={(e) => {
-                                setDate(e)
-                            }}
-                            minDate={moment()}
-                            position={"top"}
-                            showTimePicker={true}
-                            moment={date}
-                            lang={"ru"}
-                        >
-                            <FormLayout>
-                                <SelectMimicry top={"Дата и время звонка"} placeholder={date && date.format("DD.MM HH:mm")} type="text"/>
-                            </FormLayout>
-                        </DatetimePickerTrigger>
+
 
                         <Checkbox> <b>Не передавать</b> мой номер менеджерам сообщества</Checkbox>
                     </FormLayout>
                     <Div>
-                        <Button onClick={() => setCall(2)} size={"xl"}>Заказать звонок</Button>
+                        <Button disabled={phone.match(/\+7\d{10}/g) === null} onClick={() => makeCall()} size={"xl"}>Заказать звонок</Button>
                     </Div>
                 </div>
             }
-        </Panel>
-        <Panel id="countries">
-            <PanelHeader>
-                Выберите время звонка
-            </PanelHeader>
-            <Group>
-            </Group>
         </Panel>
     </View> : ""
 };

@@ -23,14 +23,14 @@ import Progress from "@vkontakte/vkui/dist/components/Progress/Progress";
 import Icon56UserAddOutline from '@vkontakte/icons/dist/56/user_add_outline';
 import bridge from '@vkontakte/vk-bridge';
 import Icon24UserOutline from '@vkontakte/icons/dist/24/user_outline';
-import {Route, useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import View from "@vkontakte/vkui/dist/components/View/View";
 import axios from 'axios';
 import users from "../api/users";
 import {useSelector} from "react-redux";
 import {useDispatch} from "react-redux";
 import Icon24Similar from '@vkontakte/icons/dist/24/similar';
-    import Icon24Phone from '@vkontakte/icons/dist/24/phone';
+import Icon24Phone from '@vkontakte/icons/dist/24/phone';
 import Icon24StorefrontOutline from '@vkontakte/icons/dist/24/storefront_outline';
 import Icon28MoneyCircleOutline from '@vkontakte/icons/dist/28/money_circle_outline';
 import {loadCommunity, setCommunity} from "../store/user/userActions";
@@ -39,6 +39,7 @@ import communities from "../api/communities";
 const Hello = ({location}) => {
     const currentUser = useSelector(state => state.user.user);
     const currentToken = useSelector(state => state.user.token);
+    const community = useSelector(state => state.user.community);
     const dispatch = useDispatch();
 
     const [activeSlide, setActiveSlide] = useState(0);
@@ -53,26 +54,34 @@ const Hello = ({location}) => {
         let query = new URLSearchParams(window.location.search);
         let group_id = query.get('vk_group_id');
         let role = query.get('vk_viewer_group_role');
-        if(group_id){
+        if (group_id) {
             dispatch(loadCommunity(group_id));
-            history.push("get_call/"+group_id);
+            history.push("get_call/" + group_id);
+        }
+        else if (currentUser.admin_communities.length > 0) {
+            history.push("/publics");
         }
 
     }, []);
 
 
     const goToApp = e => {
-        history.push("/app");
+        // history.push("/app");
     };
 
 
     const install = e => {
         bridge.send("VKWebAppAddToCommunity", {}).then((data) => {
-            bridge.send("VKWebAppGetCommunityToken", {"app_id": 7516806, "group_id": data.group_id, "scope": "messages"}).then((r) => {
+            bridge.send("VKWebAppGetCommunityToken", {
+                "app_id": 7516806,
+                "group_id": parseInt(data.group_id),
+                "scope": "messages"
+            }).then((r) => {
                 const token = r.access_token;
-                const id = data.group_id;
+                const id = parseInt(data.group_id);
                 communities.createCommunity(token, id).then((z) => {
                     dispatch(setCommunity(z.data));
+                    history.push('/manage/' + z.data.community_vk_id);
                 })
             });
         });
@@ -103,35 +112,39 @@ const Hello = ({location}) => {
                             header="Сервис обратного звонка"
                             action={<Button onClick={moveToNext} size="l">Понятно</Button>}
                         >
-                           Добро пожаловать! Сервис обратного звонка поможет Вам и вашим клиентам проще связываться.
+                            Добро пожаловать! Сервис обратного звонка поможет Вам и вашим клиентам проще связываться.
                         </Placeholder>
                         <Placeholder
                             icon={<Icon12OnlineVkmobile width={64} height={64}/>}
                             header="Заказ звонка вашим клиентом"
                             action={<Button onClick={moveToNext} size="l">Понятно</Button>}
                         >
-                            Добавляйте кнопку обратного звонка в ваше сообщество. Как только клиент закажет вызов, мы позвоним ему и вам и свяжем вас.
+                            Добавляйте кнопку обратного звонка в ваше сообщество. Как только клиент закажет вызов, мы
+                            позвоним ему и вам и свяжем вас.
                         </Placeholder>
                         <Placeholder
                             icon={<Icon24Phone width={64} height={64}/>}
                             header="Получайте вызовы"
                             action={<Button onClick={moveToNext} size="l">Понятно</Button>}
                         >
-                            Клиенты экономят на звонках вам, а вы получая звонок уже знаете все о клиенте: мы скажем как его зовут, из какого он города и другую информацию, которую вы выберите в настройках.
+                            Клиенты экономят на звонках вам, а вы получая звонок уже знаете все о клиенте: мы скажем как
+                            его зовут, из какого он города и другую информацию, которую вы выберите в настройках.
                         </Placeholder>
                         <Placeholder
                             icon={<Icon24StorefrontOutline width={64} height={64}/>}
                             header="Оставайтесь на связи"
                             action={<Button onClick={moveToNext} size="l">Удобное время звонка</Button>}
                         >
-                           Клиент закажет обратный звонок и укажет, когда именно ему удобно позвонить, а мы сделаем это точно в срок. Вы в свою очередь укажите график работы своих менеджеров!
+                            Клиент закажет обратный звонок и укажет, когда именно ему удобно позвонить, а мы сделаем это
+                            точно в срок. Вы в свою очередь укажите график работы своих менеджеров!
                         </Placeholder>
                         <Placeholder
                             icon={<Icon28MoneyCircleOutline width={64} height={64}/>}
                             header={"Начните прямо сейчас"}
                             action={<Button onClick={install} size="l">Начать</Button>}
                         >
-                            Установите приложение в сообщество, настройте минимум параметров, начните принимать вызовы и зарабатывать!
+                            Установите приложение в сообщество, настройте минимум параметров, начните принимать вызовы и
+                            зарабатывать!
                         </Placeholder>
 
                     </Gallery>

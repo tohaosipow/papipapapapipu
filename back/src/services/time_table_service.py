@@ -19,12 +19,14 @@ class TimeTableService:
         db_session.refresh(new_time_table)
         return new_time_table
 
+
     def get_time_table(self, db_session: Session, manager_id: int, day: str) -> TimeTable:
         time_table = db_session.query(TimeTable).filter_by(manager_id=manager_id)\
                                                 .filter_by(day_of_the_week=day)\
                                                 .order_by(TimeTable.start_work)\
                                                 .all()
         return time_table
+
 
     def update_time_table(self, db_session: Session, time_table_id: int, time_to_update: TimeTableUpdate):
         update_time = db_session.query(TimeTable).filter_by(id=time_table_id).first()
@@ -39,6 +41,7 @@ class TimeTableService:
         db_session.commit()
         db_session.refresh(update_time)
         return update_time
+
 
     def remove_time_table(self, db_session: Session, time_table_id: int):
         time_table = db_session.query(TimeTable).get(time_table_id)

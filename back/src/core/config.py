@@ -14,6 +14,8 @@ SQLALCHEMY_DATABASE_URI = (
 	f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_SERVER}:{MYSQL_PORT}/{MYSQL_DB}"
 )
 
+USER_IS_NOT_ADMIN = 'User is not admin of this community'
+
 PROJECT_NAME = "LeadersOfDigitalBackend"
 
 BACKEND_CORS_ORIGINS = "http://localhost:*, http://0.0.0.0:*"

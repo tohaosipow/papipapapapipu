@@ -6,7 +6,7 @@ import '@vkontakte/vkui/dist/vkui.css';
 import {useSelector, useDispatch} from "react-redux";
 import Hello from "./panels/Hello";
 import eruda from 'eruda'
-import { createBrowserHistory } from 'history'
+import {createBrowserHistory} from 'history'
 
 import {
     Switch,
@@ -15,6 +15,9 @@ import {
 import axios from "axios";
 import {loadToken, loadUser} from "./store/user/userActions";
 import GetCall from "./panels/Application/GetCall";
+import ManageCommunity from "./panels/Application/ManageCommunity";
+import Communities from "./panels/Application/Communities";
+
 const history = createBrowserHistory();
 
 
@@ -32,7 +35,6 @@ const App = () => {
     useEffect(() => {
 
 
-
         bridge.send("VKWebAppInit", {});
         bridge.subscribe(({detail: {type, data}}) => {
             if (type === 'VKWebAppUpdateConfig') {
@@ -41,7 +43,7 @@ const App = () => {
                 document.body.attributes.setNamedItem(schemeAttribute);
             }
             if (type === 'VKWebAppViewRestore') {
-                loadUser();
+                dispatch(loadUser());
             }
         });
 
@@ -66,16 +68,15 @@ const App = () => {
     }, []);
 
 
-    return (
-        <HashRouter history={history}>
-            <Switch>
+    return currentUser?<HashRouter history={history}>
+                <Switch>
+                    <Route path="/get_call/:group_id" component={GetCall}/>
+                    <Route path="/manage/:group_id" component={ManageCommunity}/>
+                    <Route path="/publics" component={Communities}/>
+                    <Route path="/" component={Hello}/>
+                </Switch>
+            </HashRouter> : popout
 
-                <Route path="/get_call/:group_id" component={GetCall}/>
-                <Route path="/manage/:group_id" component={Hello}/>
-                <Route path="/" component={Hello}/>
-            </Switch>
-        </HashRouter>
-    );
 }
 
 export default App;

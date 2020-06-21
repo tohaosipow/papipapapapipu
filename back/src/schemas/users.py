@@ -25,3 +25,4 @@ class UserCreate(UserBase):
 	
 class User(UserBaseInDB):
 	pass
+

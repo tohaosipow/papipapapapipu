@@ -18,3 +18,4 @@ Werkzeug==1.0.1
 vk_api
 cryptography
 python-multipart
+requests

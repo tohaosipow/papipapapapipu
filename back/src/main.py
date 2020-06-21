@@ -8,7 +8,8 @@ from api.api_v1.api import api_router
 from core import config
 from database.session import Session
 
-app = FastAPI(title=config.PROJECT_NAME, openapi_url="/api/v1/openapi.json", docs_url=os.environ.get('TOHA_SELECT', "/docs"))
+app = FastAPI(title=config.PROJECT_NAME, openapi_url="/api/v1/openapi.json",
+              docs_url=os.environ.get('TOHA_SELECT', "/docs"))
 
 # CORS
 origins = []
@@ -28,6 +29,7 @@ if config.BACKEND_CORS_ORIGINS:
     ),
 
 app.include_router(api_router, prefix=config.API_V1_STR)
+
 
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):

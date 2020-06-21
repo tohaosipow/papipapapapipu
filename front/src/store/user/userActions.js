@@ -5,7 +5,7 @@ import communities from "../../api/communities";
 const loadUser = () => {
     return (dispatch, getState) => {
         return users.getUser().then((response) => {
-            dispatch(setUser(response.data));
+            return dispatch(setUser(response.data));
         });
     }
 
@@ -25,7 +25,6 @@ const loadToken = (query) => {
     return (dispatch, getState) => {
         return users.getToken(query).then((response) => {
             localStorage.setItem('access_token', response.data.access_token);
-
             dispatch(setToken(response.data.access_token));
 
             return response.data.access_token;
